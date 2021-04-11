@@ -20,6 +20,9 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="https://printjs-4de6.kxcdn.com/print.min.css" rel="stylesheet">
+
+    @yield('head', '')
+
 </head>
 <body>
     <div id="app">
