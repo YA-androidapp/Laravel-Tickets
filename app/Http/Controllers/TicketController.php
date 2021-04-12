@@ -20,23 +20,28 @@ class TicketController extends Controller
     public function index(Request $request)
     {
 
-    $keyword = $request->input('keyword');
-    $keyword = str_replace(array(' ', '%20', '+'), ' ', $keyword);
-    $k = explode('%20', $keyword);
-    if (count($k) === 2) {
-        $k_id = $k[0];
-        $k_uuid = $k[1];
-        $query = Ticket::query();
-        $query->where('id', '=', "{$k_id}")
-            ->Where('uuid', '=', "{$k_uuid}");
-        $tickets = $query->paginate();
-        return view('ticket.index', compact('tickets'));
-    }
+        $keyword = $request->input('keyword');
+        $keyword = str_replace(array(' ', '%20', '+'), ' ', $keyword);
+        $k = explode(' ', $keyword);
+        if (count($k) === 2) {
+            $k_id = $k[0];
+            $k_uuid = $k[1];
+            $query = Ticket::query();
+            $query->where('id', '=', "{$k_id}")
+                ->Where('uuid', '=', "{$k_uuid}");
+            $tickets = $query->paginate();
+            return view('ticket.index', compact('tickets'))->with('i', (request()->input('page', 1) - 1) * $tickets->perPage());
+        } elseif ($keyword !== '') {
+            $query = Ticket::query();
+            $query->where('id', '=', "");
+            $tickets = $query->paginate();
+            return view('ticket.index', compact('tickets'))->with('i', 0);
+        } else {
+            $tickets = Ticket::paginate();
 
-        $tickets = Ticket::paginate();
-
-        return view('ticket.index', compact('tickets'))
-            ->with('i', (request()->input('page', 1) - 1) * $tickets->perPage());
+            return view('ticket.index', compact('tickets'))
+                ->with('i', (request()->input('page', 1) - 1) * $tickets->perPage());
+        }
     }
 
     /**
